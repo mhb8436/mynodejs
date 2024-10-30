@@ -1,0 +1,60 @@
+# r (GET : localhost:3000/posts)
+type Query {
+    hello: String
+    getPost(id: ID!): Post
+}
+
+# custom type
+type Post{
+    id: ID!
+    title: String!
+    content:String!
+}
+
+input PostInput{
+    title: String!
+    content: String!
+}
+
+# c, u, d (POST, PUT, DELETE) 
+type Mutation {
+    createPost(input: PostInput!): Post
+    updatePost(id: ID!, input: PostInput): Post
+    deletePost(id: ID!)
+}
+
+# 기본 타입
+# Int : 32비트 정수형 
+# Float : 부동 소수점 
+# String : 문자열 
+# Boolean : 참 또는 거짓
+# ID : 고유 식별자(문자열)
+# 커스텀 타입  -> Post, PostInput 
+
+########### Query Example ##############
+
+{
+    hello
+    getPost(id: "1") {
+        title
+        content
+    }
+}
+
+########### Insert Update Delete Example ##############
+
+mutation  {
+    createPost(input: {title: "New Title", content: "New Content}) {
+        id
+        title
+    }
+}
+
+{
+    "data": {
+        "createPost": {
+            "id": 3,
+            "title":"New Title"
+        }
+    }
+}
