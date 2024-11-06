@@ -1,5 +1,18 @@
 const userService = require('../services/userService');
-const models = require('../models');
+const {validationResult} = require('express-validator'); // added
+
+const createUser = async (req, res) => {
+    try{
+        const errors = validationResult(req); // added 
+        if(!errors.isEmpty()){ // added
+            return res.status(400).json({errors: errors.array().map(e=>e.msg)});
+        } // added
+        const user = await userService.createUser(req.body);
+        res.status(201).json({data:user, message:'ok'});
+    }catch(e){
+        res.status(500).json({message: e.message});
+    }
+}
 
 const findAll = async (req, res) => {
     try{
@@ -11,14 +24,6 @@ const findAll = async (req, res) => {
     }
 }
 
-const createUser = async (req, res) => {
-    try{
-        const user = await userService.createUser(req.body);
-        res.status(201).json({data:user, message:'ok'});
-    }catch(e){
-        res.status(500).json({message: e});
-    }
-}
 
 module.exports = {
     findAll,
