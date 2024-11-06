@@ -9,7 +9,13 @@ const createUser = async (userData) => {
     return await models.User.create(userData);
 }
 
+const findUserByEmail = async (email) => {
+    return await models.User.findOne({
+        where : {email: email}
+    }); // select * from users where email = email
+}
 module.exports = {
     findAll,
     createUser,
+    findUserByEmail,
 }
