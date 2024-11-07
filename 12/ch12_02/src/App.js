@@ -31,6 +31,15 @@ function App() {
     socket.on('update:rooms', (rooms)=> { // other room update 
       setRooms(rooms);
     });
+    socket.on('update:users', (users)=> {
+      setUsers(users);
+    });
+    socket.on('user:joined', (user)=> {
+      setMessage((prevMessage)=> [...prevMessage, `${user} joined this room`]);
+    });
+    socket.on('user:left', (user)=> {
+      setMessage((prevMessage)=> [...prevMessage, `${user} left this room`]);
+    })
     socket.on('chat:message', (msg)=> { // receive chat message
       setMessages((prevMessage) => [...prevMessage, msg]);
     });
