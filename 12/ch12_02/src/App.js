@@ -39,13 +39,18 @@ function App() {
     });
     socket.on('user:left', (user)=> {
       setMessage((prevMessage)=> [...prevMessage, `${user} left this room`]);
-    })
+    });
     socket.on('chat:message', (msg)=> { // receive chat message
       setMessages((prevMessage) => [...prevMessage, msg]);
     });
 
     return () => {
       socket.off('chat:message'); // 컴포넌트가 unmount 될 때 socket 리스닝 해제 
+      socket.off('user:joined');
+      socket.off('user:left');
+      socket.off('room:joined');
+      socket.off('update:users');
+      socket.off('update:rooms');
     };
   }, []);
   const sendMessage = (e) => {
@@ -54,23 +59,44 @@ function App() {
       setMessage('');
     }
   }
+  const handleLogin = () => {
+    if(username) {
+      socket.emit('login', username);
+    }
+  }
+  const handleCreateRoom = () =>{
+    if(roomName){
+      socket.emit('create:room', roomName);
+      setRoomName('');
+    }
+  }
   return (
     <div className="App">
-      <h1>Message List</h1>      
-      <ul id="messages">
-        {messages.map((msg, index) => (
-          <li key={index}>{msg}</li>
-        ))}
-      </ul>
-      <h1>Send Message</h1>
-      <input
-        id="input"
-        type="text"
-        value={message}
-        onChange={(e)=> setMessage(e.target.value)}
-      >
-      </input>
-      <button onClick={sendMessage}>Send</button>
+      {!isLogined ? (
+        <div className="login">
+          <h2>Login</h2>
+          <input
+            type="text"
+            placeholder='Enter username'
+            value={username}
+            onChange={(e)=> setUsername(e.target.value)}
+          />
+          <button onClick={handleLogin}>Login</button>
+        </div>
+      ): (
+        <div className='chat-container'>
+          <div className='create-room'>
+            <h2>Create Room</h2>
+            <input
+              type="text"
+              placeholder='enter the room'            
+              value={roomName}
+              onChange={(e)=> setRoomName(e.target.value)}
+            />
+            <button onClick={handleCreateRoom}>Create Room</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
