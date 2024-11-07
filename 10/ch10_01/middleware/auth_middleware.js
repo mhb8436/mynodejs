@@ -2,8 +2,8 @@ const jwt = require('jsonwebtoken');
 
 const authenticate = (req, res, next) => {
     let token;
-    if(req.header.authorization) {
-        token = req.header.authorization.split(' ')[1]; 
+    if(req.headers.authorization) { // chagned
+        token = req.headers.authorization.split(' ')[1];  // chagned
         // Bearer xxxxxxx
     }
     if(!token) return res.sendStatus(401);
