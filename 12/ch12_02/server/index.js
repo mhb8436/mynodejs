@@ -1,20 +1,14 @@
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
-const path = require('path');
 
-const app = express();
-
-app.get("/posts", (req, res)=> {
-    // biz logic
-});
-
-const server = http.createServer(app);
+const app = express(); // not http server middleware  
+const server = http.createServer(app); 
 const io = socketIo(server, {
-    cors : {
-        origin: "http://localhost:3000/",
-        methods: ["GET", "POST"],
+    cors: {
+        origin: "http://localhost:3000",
         credentials: true,
+        method: ["GET", "POST"]
     }
 });
 
@@ -26,13 +20,14 @@ io.on('connection', (socket)=> {
         ${JSON.stringify(users)},  ${JSON.stringify(rooms)}`);
     
     // 1. login  sendlogin
-    socket.on('login', (username) => {
+    socket.on('login', (username) => { // 2) 
         users[socket.id] = username;
         socket.emit('login:success', {username, rooms:Object.keys(rooms)});
         io.emit('update:users', Object.values(users));
     });
     // 2. create room room name, key rooms['room1'] = [], room['room2'] = []
-    socket.on('create:room', (room)=>{
+    socket.on('create:room', (room)=>{ // 4)
+        console.log(room);
         if(!rooms[room]) {
             rooms[room] = []; 
             socket.join(room);
@@ -43,7 +38,7 @@ io.on('connection', (socket)=> {
         }
     });
     // 3. join room 
-    socket.on('join:room', (room) => {
+    socket.on('join:room', (room) => { // 6)
         if(rooms[room]){
             socket.join(room);
             socket.emit('room:joined', room);
